@@ -1,7 +1,7 @@
 ---
 - name: BIGIP | Testes com módulos do bigip
   hosts: bigip
-  gather_facts: false
+  gather_facts: true
   collections:
     - f5networks.f5_modules
 
@@ -17,13 +17,23 @@
   tasks:
     - name: SET FACTS | Seta facts e variáveis para uso no playbook
       ansible.builtin.set_fact:
-        f5_user: '{{ lookup("env", "ANSIBLE_NET_USERNAME") }}'
-        f5_password: '{{ lookup("env", "ANSIBLE_NET_PASSWORD") }}'
+        f5_user: "{{ lookup('env', 'ANSIBLE_NET_USERNAME') }}"
+        f5_password: "{{ lookup('env', 'ANSIBLE_NET_PASSWORD') }}"
+        f5_ssh_keyfile: "{{ lookup('env', 'ANSIBLE_NET_SSH_KEYFILE') }}"
 
     - name: F5 FACTS | Gather facts com módulo F5
       f5networks.f5_modules.bigip_device_info:
         gather_subset:
           - devices
+
+        provider: "{{ f5_provider }}"
+      delegate_to: localhost
+
+    - name: BACKUP | Gera o arquivo de backup UCS no balanceador
+      f5networks.f5_modules.bigip_ucs_fetch:
+        async_timeout: 600
+        only_create_file: true
+        src: "{{ inventory_hostname }}_{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}.ucs"
 
         provider: "{{ f5_provider }}"
       delegate_to: localhost
