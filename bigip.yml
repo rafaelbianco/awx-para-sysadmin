@@ -6,8 +6,8 @@
   tasks:
     - name: SET FACTS | Seta facts e variáveis para uso no playbook
       ansible.builtin.set_fact:
-        f5_user: "{{ lookup("env", "ANSIBLE_NET_USERNAME") }}"
-        f5_password: "{{ lookup("env", "ANSIBLE_NET_PASSWORD") }}"
+        f5_user: '{{ lookup("env", "ANSIBLE_NET_USERNAME") }}'
+        f5_password: '{{ lookup("env", "ANSIBLE_NET_PASSWORD") }}'
 
     - name: F5 FACTS | Gather facts com módulo F5
       f5networks.f5_modules.bigip_device_info:
