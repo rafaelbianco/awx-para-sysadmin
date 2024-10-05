@@ -34,18 +34,15 @@
       f5networks.f5_modules.bigip_ucs_fetch:
         async_timeout: 600
         only_create_file: true
-        src: "{{ inventory_hostname }}_{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}{{ ansible_date_time.minute }}.ucs"
+        src: "{{ inventory_hostname }}_{{ ansible_date_time.date }}.ucs"
 
         provider: "{{ f5_provider }}"
       delegate_to: localhost
 
-    - name: CHAVE PRIVADA | Transfere a chave privada para o balanceador para uso no SCP
-      f5networks.f5_modules.bigip_file_copy:
-        name: f5sshkey.key
-        source: "{{ f5_ssh_keyfile }}"
-        datastore: ifile
-        state: "present"
-        force: true
+    - name: SCP | Transfere via SCP o arquivo de backup para a máquina LI2017
+      f5networks.f5_modules.bigip_command:
+        commands: 'run /util bash -c "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null /var/local/ucs/{{ inventory_hostname }}_{{ ansible_date_time.date }}.ucs {{ ansible_user }}@ubuntusrv1.lab.local:/backup/F5-backups/"'
+
         provider: "{{ f5_provider }}"
       delegate_to: localhost
 ...
