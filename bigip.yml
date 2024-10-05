@@ -5,6 +5,15 @@
   collections:
     - f5networks.f5_modules
 
+  vars:
+    f5_provider:
+      server: "{{ inventory_hostname }}"
+      user: "{{ f5_user }}"
+      password: "{{ f5_password }}"
+      server_port: 443
+      transport: "rest"
+      validate_certs: false
+
   tasks:
     - name: SET FACTS | Seta facts e variáveis para uso no playbook
       ansible.builtin.set_fact:
@@ -16,12 +25,6 @@
         gather_subset:
           - devices
 
-        provider:
-          server: "{{ inventory_hostname }}"
-          user: "{{ f5_user }}"
-          password: "{{ f5_password }}"
-          server_port: 443
-          transport: "rest"
-          validate_certs: false
+        provider: "{{ f5_provider }}"
       delegate_to: localhost
 ...
