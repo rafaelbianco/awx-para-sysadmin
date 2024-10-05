@@ -1,0 +1,23 @@
+---
+- name: BIGIP | Testes com módulos do bigip
+  hosts: bigip
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: SET FACTS | Seta facts e variáveis para uso no playbook
+      ansible.builtin.set_fact:
+        f5_user: "{{ lookup("env", "ANSIBLE_NET_USERNAME") }}"
+        f5_password: "{{ lookup("env", "ANSIBLE_NET_PASSWORD") }}"
+
+    - name: F5 FACTS | Gather facts com módulo F5
+      f5networks.f5_modules.bigip_device_info:
+        gather_subset:
+          - devices
+        provider:
+          server: "{{ ansible_inventory }}"
+          user: "{{ asible_user }}"
+          password: "{{ ansible_password }}"
+          server_port: 443
+          transport: "rest"
+          validate_certs: false
+...
