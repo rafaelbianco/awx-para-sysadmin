@@ -34,7 +34,7 @@
       f5networks.f5_modules.bigip_ucs_fetch:
         async_timeout: 600
         only_create_file: true
-        src: "{{ inventory_hostname }}_{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}.ucs"
+        src: "{{ inventory_hostname }}_{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}{{ ansible_date_time.minute }}.ucs"
 
         provider: "{{ f5_provider }}"
       delegate_to: localhost
