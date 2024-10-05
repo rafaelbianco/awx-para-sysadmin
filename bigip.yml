@@ -38,4 +38,14 @@
 
         provider: "{{ f5_provider }}"
       delegate_to: localhost
+
+    - name: CHAVE PRIVADA | Transfere a chave privada para o balanceador para uso no SCP
+      f5networks.f5_modules.bigip_file_copy:
+        name: f5sshkey.key
+        source: "{{ f5_ssh_keyfile }}"
+        datastore: ifile
+        state: "present"
+        force: true
+        provider: "{{ f5_provider }}"
+      delegate_to: localhost
 ...
