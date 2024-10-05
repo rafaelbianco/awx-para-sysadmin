@@ -1,7 +1,8 @@
 ---
 - name: BIGIP | Testes com módulos do bigip
   hosts: bigip
-  gather_facts: false
+  gather_facts: true
+  connection: local
   collections:
     - f5networks.f5_modules
 
