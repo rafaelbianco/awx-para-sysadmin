@@ -1,0 +1,24 @@
+---
+- name: SANEAMENTO SERVIDOR BACKUP | Procura arquivos antigos e apaga-os
+  hosts: linux
+  vars:
+    path_destino_backup: "/backup/F5-backups/"
+    idade_do_arquivo: "20m" # m=minutos, h=horas, d=dias e w=semanas
+  tasks:
+    - name: FIND | Acha arquivos no target dentro da pasta "{{ path_destino_backup }}" mais antigos que "{{ idade_do_arquivo }}"
+      ansible.builtin.find:
+        path: "{{ path_destino_backup }}"
+        patterns: '*.ucs'
+        age: "{{ idade_do_arquivo }}"
+      register: output
+
+    - name: REGISTRA | Registra os nomes dos arquivos em uma variável
+      ansible.builtin.set_fact:
+        arquivos_para_sanear: "{{ output.files | map(attribute='path') }}"
+
+    - name: SANEAMENTO | Apaga a lista de arquivos do target
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop: "{{ arquivos_para_sanear }}"
+...
