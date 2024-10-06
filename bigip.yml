@@ -17,6 +17,7 @@
     servidor_destino_scp: "ubuntusrv1.lab.local"
     diretorio_destino_scp: "/backup/F5-backups/"
     ssh_key_file_location: "/etc/security/f5scpkeytoubuntusrv1.key"
+    nome_ucs: "{{ inventory_hostname }}_{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}{{ ansible_date_time.minute }}.ucs"
 
   tasks:
     - name: SET FACTS | Seta facts e variáveis para uso no playbook
@@ -36,21 +37,21 @@
       f5networks.f5_modules.bigip_ucs_fetch:
         async_timeout: 600
         only_create_file: true
-        src: "{{ inventory_hostname }}_{{ ansible_date_time.date }}.ucs"
+        src: "{{ nome_ucs }}"
 
         provider: "{{ f5_provider }}"
       delegate_to: localhost
 
     - name: SCP | Transfere via SCP o arquivo de backup para a máquina LI2017
       f5networks.f5_modules.bigip_command:
-        commands: 'run /util bash -c "scp -i {{ ssh_key_file_location }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null /var/local/ucs/{{ inventory_hostname }}_{{ ansible_date_time.date }}.ucs {{ ansible_user }}@{{ servidor_destino_scp }}:{{ diretorio_destino_scp }}"'
+        commands: 'run /util bash -c "scp -i {{ ssh_key_file_location }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null /var/local/ucs/{{ nome_ucs }} {{ ansible_user }}@{{ servidor_destino_scp }}:{{ diretorio_destino_scp }}"'
 
         provider: "{{ f5_provider }}"
       delegate_to: localhost
 
     - name: SANEAMENTO F5 | Remove o arquivo UCS recém criado para manter o balanceador saneado
       f5networks.f5_modules.bigip_ucs:
-        ucs: "{{ inventory_hostname }}_{{ ansible_date_time.date }}.ucs"
+        ucs: "{{ nome_ucs }}"
         state: absent
 
         provider: "{{ f5_provider }}"
