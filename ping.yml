@@ -1,6 +1,7 @@
 ---
 - name: PING | Testa conectividade via ansible para os targets usando o módulo ping
   hosts: all
+  gather_facts: true
   tasks:
     - name: Tentando conectividade para os targets
       ansible.builtin.ping:
